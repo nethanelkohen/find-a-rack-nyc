@@ -3,49 +3,23 @@ import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { MapView } from 'expo';
 import { ListItem } from 'react-native-elements';
 
-import data from './assets/bikeracks-old.json';
-
-const racks = [
-  {
-    name: '1 7 AV S',
-    Address: '1 7 AV S, New York, NY 10014, USA',
-    value: '5 racks',
-    'coordinate': {
-      'latitude': 40.729711,
-      'longitude': -74.004858
-    }
-  },
-  {
-    name: '1 BOERUM PL',
-    Address: '1 BOERUM PL, Brooklyn, NY 11201, USA',
-    value: '1 rack',
-    'coordinate': { 'latitude': 40.691758, 'longitude': -73.988892 }
-  },
-  {
-    name: '1 CENTRE ST',
-    Address: '1 CENTRE ST, New York, NY 10007, USA',
-    value: '10 racks',
-    coordinate: { 'latitude': 40.712931, 'longitude': -74.003748 }
-  }
-];
+import racks from './assets/bikeracks.json';
 
 class App extends Component {
-  state = {
-    racks: [data]
-  };
   // keyExtractor = (item, index) => index.toString();
   //
   // renderItem = ({ item }) => (
   //   console.log(item), <ListItem title={item.Name} subtitle={item.Value} />
   // );
-
- 
+  componentDidMount() {
+    console.log(racks);
+  }
 
   render() {
     return (
       // <FlatList
       //   keyExtractor={this.keyExtractor}
-      //   data={data}
+      //   data={racks}
       //   renderItem={this.renderItem}
       // />
       <View style={styles.container}>
