@@ -11,9 +11,6 @@ class App extends Component {
   // renderItem = ({ item }) => (
   //   console.log(item), <ListItem title={item.Name} subtitle={item.Value} />
   // );
-  componentDidMount() {
-    console.log(racks);
-  }
 
   render() {
     return (
