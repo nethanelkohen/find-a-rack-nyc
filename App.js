@@ -25,7 +25,12 @@ class App extends Component {
   };
 
   renderMarker = data => (
-    <Marker key={Math.random()} coordinate={data.location} />
+    <Marker
+      key={Math.random()}
+      coordinate={data.location}
+      title={data.name}
+      description={data.value}
+    />
   );
 
   render() {
