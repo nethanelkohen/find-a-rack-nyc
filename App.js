@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
-import { MapView } from 'expo';
-import { Marker, Callout } from 'react-native-maps';
-import ClusteredMapView from 'react-native-maps-super-cluster';
+import React, { Component } from "react";
+import { StyleSheet, Text, View, FlatList } from "react-native";
+import { MapView } from "expo";
+import { Marker, Callout } from "react-native-maps";
+import ClusteredMapView from "react-native-maps-super-cluster";
 
-import racks from './assets/racks.json';
+import racks from "./assets/racks.json";
 
 class App extends Component {
   renderCluster = (cluster, onPress) => {
@@ -13,12 +13,12 @@ class App extends Component {
       clusterId = cluster.clusterId;
 
     const clusteringEngine = this.map.getClusteringEngine(),
-      clusteredPoints = clusteringEngine.getLeaves(clusterId, 100);
+      clusteredPoints = clusteringEngine.getLeaves(clusterId, 10);
 
     return (
-      <Marker coordinate={coordinate}>
-        <View style={{ flex: 1 }}>
-          <Text>{pointCount}</Text>
+      <Marker coordinate={coordinate} onPress={onPress}>
+        <View style={styles.clusterContainer}>
+          <Text style={styles.clusterText}>{pointCount}</Text>
         </View>
       </Marker>
     );
@@ -37,6 +37,7 @@ class App extends Component {
     return (
       <ClusteredMapView
         style={{ flex: 1 }}
+        showsUserLocation={true}
         data={racks}
         initialRegion={{
           latitude: 40.6872281,
@@ -49,6 +50,9 @@ class App extends Component {
         }}
         renderMarker={this.renderMarker}
         renderCluster={this.renderCluster}
+        onLongPress={event =>
+          console.log("onpress", event.nativeEvent.coordinate)
+        }
       />
 
       // <View>
@@ -84,12 +88,29 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center"
   },
   map: {
     ...StyleSheet.absoluteFillObject
+  },
+  clusterContainer: {
+    width: 35,
+    height: 35,
+    padding: 3,
+    borderWidth: 1,
+    borderRadius: 15,
+    alignItems: "center",
+    borderColor: "#65bc46",
+    justifyContent: "center",
+    backgroundColor: "white"
+  },
+  clusterText: {
+    fontSize: 13,
+    color: "#65bc46",
+    fontWeight: "500",
+    textAlign: "center"
   }
 });
 
