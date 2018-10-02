@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, AlertIOS } from "react-native";
 import { MapView } from "expo";
 import { Marker, Callout } from "react-native-maps";
 import ClusteredMapView from "react-native-maps-super-cluster";
@@ -7,6 +7,14 @@ import ClusteredMapView from "react-native-maps-super-cluster";
 import racks from "./assets/racks.json";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      racks,
+      markerText: null
+    };
+  }
+
   renderCluster = (cluster, onPress) => {
     const pointCount = cluster.pointCount,
       coordinate = cluster.coordinate,
@@ -30,34 +38,51 @@ class App extends Component {
       coordinate={data.location}
       title={data.name}
       description={data.value}
+      // onPress={() => console.log(onPress)}
     />
   );
 
+  takeInCoord = event => {
+    AlertIOS.prompt("How many racks?", null, text =>
+      this.setState({
+        markerText: text
+      })
+    );
+
+    const object = {
+      location: {
+        latitude: null,
+        longitude: null
+      },
+      name: "user-generated marker",
+      value: this.state.markerText
+    };
+    object.location.latitude = event.latitude;
+    object.location.longitude = event.longitude;
+
+    this.setState({ racks: [...this.state.racks, object] });
+  };
+
   render() {
+    console.log(this.state.markerText);
     return (
       <ClusteredMapView
         style={{ flex: 1 }}
         showsUserLocation={true}
-        data={racks}
+        data={this.state.racks}
         initialRegion={{
           latitude: 40.6872281,
           longitude: -73.9783627,
-          latitudeDelta: 0.2,
-          longitudeDelta: 0.2
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.001
         }}
         ref={r => {
           this.map = r;
         }}
         renderMarker={this.renderMarker}
         renderCluster={this.renderCluster}
-        onLongPress={event =>
-          console.log("onpress", event.nativeEvent.coordinate)
-        }
+        onLongPress={event => this.takeInCoord(event.nativeEvent.coordinate)}
       />
-
-      // <View>
-      //   <Text>Hello</Text>
-      // </View>
     );
     // return (
     //   <View style={styles.container}>
