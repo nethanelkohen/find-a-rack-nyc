@@ -121,7 +121,7 @@ class App extends Component {
     let latLng = `${event.latitude},${event.longitude}`;
 
     fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=+${latLng}&key=${KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${KEY}`
     )
       .then(res => {
         return res.json();
