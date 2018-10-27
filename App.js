@@ -6,12 +6,14 @@ import ClusteredMapView from "react-native-maps-super-cluster";
 
 import racks from "./assets/racks.json";
 
+import KEY from "./config.js";
+
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.04;
 
 const initialRegion = {
-  latitude: 40.7147077,
-  longitude: -74.1443402,
+  latitude: 40.746,
+  longitude: -73.987,
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421
 };
@@ -22,6 +24,7 @@ class App extends Component {
     this.state = {
       racks,
       markerText: null,
+      name: null,
       ready: true
     };
   }
@@ -34,7 +37,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getCurrentPosition();
+    // this.getCurrentPosition();
   }
 
   getCurrentPosition() {
@@ -114,13 +117,33 @@ class App extends Component {
     />
   );
 
+  reverseGeocode = event => {
+    let latLng = `${event.latitude},${event.longitude}`;
+
+    fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=+${latLng}&key=${KEY}`
+    )
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        let name = `${data.results[0].address_components[0].long_name} ${
+          data.results[0].address_components[1].long_name
+        }`.toUpperCase();
+        this.setState({
+          name
+        });
+      });
+  };
+
   takeInCoord = event => {
     AlertIOS.prompt("How many racks?", null, text => {
       let textCheck = Number(text);
-      if (isNaN(textCheck)) {
-        Alert.alert("Please enter a number.");
+      if (isNaN(textCheck) || textCheck == 0) {
+        Alert.alert("Please enter a number greater than 0.");
         return;
       }
+      this.reverseGeocode(event);
       this.setState(
         {
           markerText: text
@@ -131,12 +154,14 @@ class App extends Component {
               latitude: null,
               longitude: null
             },
-            name: "USER-GENERATED MARKER",
+            name: this.state.name,
             value: `${this.state.markerText} racks`
           };
           object.location.latitude = event.latitude;
           object.location.longitude = event.longitude;
-          this.setState({ racks: [...this.state.racks, object] });
+          this.setState({
+            racks: [...this.state.racks, object]
+          });
         }
       );
     });
