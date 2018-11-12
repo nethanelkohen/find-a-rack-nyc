@@ -4,7 +4,7 @@ import { MapView } from "expo";
 import { Marker } from "react-native-maps";
 import ClusteredMapView from "react-native-maps-super-cluster";
 
-import API from "./config.js";
+import KEY from "./config.js";
 
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.04;
@@ -21,7 +21,6 @@ class App extends Component {
     super(props);
     this.state = {
       racks: [],
-      location: {},
       markerText: null,
       name: null,
       ready: true,
@@ -37,7 +36,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch(API)
+    fetch("https://whispering-everglades-30530.herokuapp.com/api/v1/racks")
       .then(response => response.json())
       .then(res => {
         res.response.map(v => {
@@ -183,21 +182,6 @@ class App extends Component {
 
   render() {
     return (
-      // <ClusteredMapView
-      //   showsUserLocation
-      //   data={this.state.racks}
-      //   onMapReady={this.onMapReady}
-      //   initialRegion={initialRegion}
-      //   onRegionChange={this.onRegionChange}
-      //   onRegionChangeComplete={this.onRegionChangeComplete}
-      //   ref={r => {
-      //     this.map = r;
-      //   }}
-      //   renderMarker={this.renderMarker}
-      //   renderCluster={this.renderCluster}
-      //   onLongPress={event => this.takeInCoord(event.nativeEvent.coordinate)}
-      //   style={StyleSheet.absoluteFill}
-      // />
       <View>
         {!this.state.loading ? (
           <ClusteredMapView
