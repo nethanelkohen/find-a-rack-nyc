@@ -4,9 +4,7 @@ import { MapView } from "expo";
 import { Marker } from "react-native-maps";
 import ClusteredMapView from "react-native-maps-super-cluster";
 
-import racks from "./assets/racks.json";
-
-import KEY from "./config.js";
+import API from "./config.js";
 
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.04;
@@ -22,10 +20,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      racks,
+      racks: [],
+      location: {},
       markerText: null,
       name: null,
-      ready: true
+      ready: true,
+      loading: true
     };
   }
 
@@ -37,6 +37,20 @@ class App extends Component {
   }
 
   componentDidMount() {
+    fetch(API)
+      .then(response => response.json())
+      .then(res => {
+        res.response.map(v => {
+          v.location = Object.assign({}, v);
+          delete v.latitude;
+          delete v.longitude;
+          delete v.location.address;
+          delete v.location.name;
+          delete v.location.value;
+        });
+
+        this.setState({ racks: res.response, loading: false });
+      });
     // this.getCurrentPosition();
   }
 
@@ -121,7 +135,7 @@ class App extends Component {
     let latLng = `${event.latitude},${event.longitude}`;
 
     fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=+${latLng}&key=${KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${KEY}`
     )
       .then(res => {
         return res.json();
@@ -169,21 +183,42 @@ class App extends Component {
 
   render() {
     return (
-      <ClusteredMapView
-        showsUserLocation
-        data={this.state.racks}
-        onMapReady={this.onMapReady}
-        initialRegion={initialRegion}
-        onRegionChange={this.onRegionChange}
-        onRegionChangeComplete={this.onRegionChangeComplete}
-        ref={r => {
-          this.map = r;
-        }}
-        renderMarker={this.renderMarker}
-        renderCluster={this.renderCluster}
-        onLongPress={event => this.takeInCoord(event.nativeEvent.coordinate)}
-        style={StyleSheet.absoluteFill}
-      />
+      // <ClusteredMapView
+      //   showsUserLocation
+      //   data={this.state.racks}
+      //   onMapReady={this.onMapReady}
+      //   initialRegion={initialRegion}
+      //   onRegionChange={this.onRegionChange}
+      //   onRegionChangeComplete={this.onRegionChangeComplete}
+      //   ref={r => {
+      //     this.map = r;
+      //   }}
+      //   renderMarker={this.renderMarker}
+      //   renderCluster={this.renderCluster}
+      //   onLongPress={event => this.takeInCoord(event.nativeEvent.coordinate)}
+      //   style={StyleSheet.absoluteFill}
+      // />
+      <View>
+        {!this.state.loading ? (
+          <ClusteredMapView
+            showsUserLocation
+            data={this.state.racks}
+            onMapReady={this.onMapReady}
+            initialRegion={initialRegion}
+            onRegionChange={this.onRegionChange}
+            onRegionChangeComplete={this.onRegionChangeComplete}
+            ref={r => {
+              this.map = r;
+            }}
+            renderMarker={this.renderMarker}
+            renderCluster={this.renderCluster}
+            onLongPress={event =>
+              this.takeInCoord(event.nativeEvent.coordinate)
+            }
+            style={StyleSheet.absoluteFill}
+          />
+        ) : null}
+      </View>
     );
   }
 }
