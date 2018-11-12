@@ -4,7 +4,7 @@ import { MapView } from "expo";
 import { Marker } from "react-native-maps";
 import ClusteredMapView from "react-native-maps-super-cluster";
 
-import KEY from "./config.js";
+import { API_KEY, API_URL, LOCAL_URL } from "./config.js";
 
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.04;
@@ -35,8 +35,16 @@ class App extends Component {
     }
   }
 
+  localEnv = () => {
+    if (__DEV__ === true) {
+      return fetch(LOCAL_URL);
+    } else {
+      return fetch(API_URL);
+    }
+  };
+
   componentDidMount() {
-    fetch("https://whispering-everglades-30530.herokuapp.com/api/v1/racks")
+    this.localEnv()
       .then(response => response.json())
       .then(res => {
         res.response.map(v => {
@@ -134,7 +142,7 @@ class App extends Component {
     let latLng = `${event.latitude},${event.longitude}`;
 
     fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${KEY}`
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${API_KEY}`
     )
       .then(res => {
         return res.json();
