@@ -11,9 +11,9 @@ const LONGITUDE_DELTA = 0.04;
 
 const initialRegion = {
   latitude: 40.746,
-  longitude: -73.987,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421
+  longitude: -73.86,
+  latitudeDelta: 0.4,
+  longitudeDelta: 0.4
 };
 
 class App extends Component {
@@ -21,8 +21,6 @@ class App extends Component {
     super(props);
     this.state = {
       racks: [],
-      markerNumber: null,
-      name: null,
       ready: true,
       loading: true
     };
@@ -37,7 +35,6 @@ class App extends Component {
 
   getEnv = env => {
     let dev = __DEV__ === true;
-    console.log(env, dev);
     switch (env) {
       case "get":
         if (dev) {
@@ -217,7 +214,6 @@ class App extends Component {
     };
 
     let url = this.getEnv("post");
-    console.log(url);
 
     fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
