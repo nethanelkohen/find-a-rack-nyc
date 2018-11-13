@@ -4,7 +4,7 @@ import { MapView } from "expo";
 import { Marker } from "react-native-maps";
 import ClusteredMapView from "react-native-maps-super-cluster";
 
-import { API_KEY, API_URL, LOCAL_URL } from "./config.js";
+import { API_KEY, GET_URL, POST_URL, LOCAL_GET, LOCAL_POST } from "./config.js";
 
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.04;
@@ -21,7 +21,7 @@ class App extends Component {
     super(props);
     this.state = {
       racks: [],
-      markerText: null,
+      markerNumber: null,
       name: null,
       ready: true,
       loading: true
@@ -35,16 +35,29 @@ class App extends Component {
     }
   }
 
-  localEnv = () => {
-    if (__DEV__ === true) {
-      return fetch(LOCAL_URL);
-    } else {
-      return fetch(API_URL);
+  getEnv = env => {
+    let dev = __DEV__ === true;
+    console.log(env, dev);
+    switch (env) {
+      case "get":
+        if (dev) {
+          return fetch(LOCAL_GET);
+        }
+        return fetch(GET_URL);
+        break;
+      case "post":
+        if (dev) {
+          return LOCAL_POST;
+        }
+        return POST_URL;
+        break;
+      default:
+        break;
     }
   };
 
   componentDidMount() {
-    this.localEnv()
+    this.getEnv("get")
       .then(response => response.json())
       .then(res => {
         res.response.map(v => {
@@ -138,54 +151,89 @@ class App extends Component {
     />
   );
 
-  reverseGeocode = event => {
+  reverseGeocode = async event => {
     let latLng = `${event.latitude},${event.longitude}`;
 
-    fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${API_KEY}`
-    )
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        let name = `${data.results[0].address_components[0].long_name} ${
-          data.results[0].address_components[1].long_name
-        }`.toUpperCase();
-        this.setState({
-          name
-        });
-      });
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${API_KEY}`,
+      {}
+    );
+
+    const data = await response.json();
+    let name = `${data.results[0].address_components[0].long_name} ${
+      data.results[0].address_components[1].long_name
+    }`.toUpperCase();
+
+    return name;
   };
 
-  takeInCoord = event => {
+  takeInCoord = async event => {
     AlertIOS.prompt("How many racks?", null, text => {
       let textCheck = Number(text);
-      if (isNaN(textCheck) || textCheck == 0) {
-        Alert.alert("Please enter a number greater than 0.");
+      if (isNaN(textCheck) || textCheck == 0 || textCheck > 15) {
+        Alert.alert("Please enter a number greater than 0 and less than 15.");
         return;
       }
-      this.reverseGeocode(event);
-      this.setState(
-        {
-          markerText: text
-        },
-        () => {
+      const value = textCheck == 1 ? `${textCheck} rack` : `${textCheck} racks`;
+
+      let latLng = `${event.latitude},${event.longitude}`;
+
+      fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng}&key=${API_KEY}`
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          let name = `${data.results[0].address_components[0].long_name} ${
+            data.results[0].address_components[1].long_name
+          }`.toUpperCase();
+
           const object = {
             location: {
-              latitude: null,
-              longitude: null
+              latitude: event.latitude,
+              longitude: event.longitude
             },
-            name: this.state.name,
-            value: `${this.state.markerText} racks`
+            name,
+            value
           };
-          object.location.latitude = event.latitude;
-          object.location.longitude = event.longitude;
+
           this.setState({
             racks: [...this.state.racks, object]
           });
-        }
-      );
+
+          this.databaseSend(object);
+        });
     });
+  };
+
+  databaseSend = object => {
+    const body = {
+      latitude: object.location.latitude,
+      longitude: object.location.longitude,
+      name: object.name,
+      address: "USER GENERATED MARKER",
+      value: object.value
+    };
+
+    let url = this.getEnv("post");
+    console.log(url);
+
+    fetch(url, {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, cors, *same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+        // "Content-Type": "application/x-www-form-urlencoded"
+      },
+      redirect: "follow", // manual, *follow, error
+      referrer: "no-referrer", // no-referrer, *client
+      body: JSON.stringify(body) // body data type must match "Content-Type" header
+    })
+      // .then(data => console.log(JSON.stringify(data))) // JSON-string from `response.json()` call
+      .catch(error => console.error(error));
   };
 
   render() {
