@@ -23,7 +23,8 @@ class App extends Component {
     this.state = {
       racks: [],
       ready: true,
-      loading: true
+      loading: true,
+      time: true
     };
   }
 
@@ -68,6 +69,11 @@ class App extends Component {
         });
 
         this.setState({ racks: res.response, loading: false });
+        setTimeout(() => {
+          this.setState({
+            time: false
+          });
+        }, 4000);
       });
     // this.getCurrentPosition();
   }
@@ -234,9 +240,10 @@ class App extends Component {
   };
 
   render() {
+    console.log(this.state.time);
     return (
       <View>
-        {!this.state.loading ? (
+        {!this.state.loading && !this.state.time ? (
           <ClusteredMapView
             showsUserLocation
             data={this.state.racks}
@@ -255,8 +262,14 @@ class App extends Component {
             style={StyleSheet.absoluteFill}
           />
         ) : (
-          <View style={styles.horizontal}>
-            <SkypeIndicator color="#0000ff" size={200} />
+          <View style={styles.container}>
+            <Text style={styles.titleText}>Find-a-Rack NYC</Text>
+            <SkypeIndicator
+              style={styles.horizontal}
+              color="#0000ff"
+              size={200}
+            />
+            <Text style={styles.loadingText}>Hold down to add a marker</Text>
           </View>
         )}
       </View>
@@ -282,12 +295,28 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center"
   },
-
+  container: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%"
+  },
   horizontal: {
     flex: 1,
-    marginTop: 400,
     justifyContent: "center",
     alignItems: "center"
+  },
+  titleText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    fontFamily: "Roboto",
+    marginTop: 100
+  },
+  loadingText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    fontFamily: "Roboto",
+    marginBottom: 100
   }
 });
 
