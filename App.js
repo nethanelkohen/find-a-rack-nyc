@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, AlertIOS, Alert } from "react-native";
 import { MapView } from "expo";
 import { Marker } from "react-native-maps";
 import ClusteredMapView from "react-native-maps-super-cluster";
+import { SkypeIndicator } from "react-native-indicators";
 
 import { API_KEY, GET_URL, POST_URL, LOCAL_GET, LOCAL_POST } from "./config.js";
 
@@ -128,7 +129,7 @@ class App extends Component {
       clusterId = cluster.clusterId;
 
     const clusteringEngine = this.map.getClusteringEngine(),
-      clusteredPoints = clusteringEngine.getLeaves(clusterId, 10);
+      clusteredPoints = clusteringEngine.getLeaves(clusterId, 100);
 
     return (
       <Marker coordinate={coordinate} onPress={onPress}>
@@ -253,7 +254,11 @@ class App extends Component {
             }
             style={StyleSheet.absoluteFill}
           />
-        ) : null}
+        ) : (
+          <View style={styles.horizontal}>
+            <SkypeIndicator color="#0000ff" size={200} />
+          </View>
+        )}
       </View>
     );
   }
@@ -276,6 +281,13 @@ const styles = StyleSheet.create({
     color: "#65bc46",
     fontWeight: "500",
     textAlign: "center"
+  },
+
+  horizontal: {
+    flex: 1,
+    marginTop: 400,
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
 
