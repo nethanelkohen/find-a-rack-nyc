@@ -4,7 +4,7 @@
     "description": "Find a bike rack in NYC.",
     "slug": "find-a-rack-nyc",
     "privacy": "public",
-    "sdkVersion": "29.0.0",
+    "sdkVersion": "32.0.0",
     "platforms": [
       "ios",
       "android"
@@ -16,6 +16,7 @@
       "image": "./assets/rack-image.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    }
+    },
+    "githubUrl": "https://github.com/nethanelkohen/find-a-rack-nyc"
   }
 }

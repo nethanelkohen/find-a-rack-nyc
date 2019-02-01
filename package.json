@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "jest-expo": "~27.0.0",
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "16.3.1"
   },
@@ -12,17 +11,13 @@
     "start": "expo start",
     "eject": "expo eject",
     "android": "expo start --android",
-    "ios": "expo start --ios",
-    "test": "jest"
-  },
-  "jest": {
-    "preset": "jest-expo"
+    "ios": "expo start --ios"
   },
   "dependencies": {
-    "dotenv": "^6.1.0",
-    "expo": "29.0.0",
-    "react": "16.3.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-29.0.0.tar.gz",
+    "dotenv": "^6.2.0",
+    "expo": "^32.0.0",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-elements": "^0.19.1",
     "react-native-indicators": "^0.13.0",
     "react-native-maps": "^0.21.0",

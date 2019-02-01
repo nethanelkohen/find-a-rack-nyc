@@ -240,7 +240,7 @@ class App extends Component {
   };
 
   render() {
-    console.log(this.state.time);
+
     return (
       <View>
         {!this.state.loading && !this.state.time ? (
@@ -309,13 +309,13 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 30,
     fontWeight: "bold",
-    fontFamily: "Roboto",
+    fontFamily: "Arial",
     marginTop: 100
   },
   loadingText: {
     fontSize: 30,
     fontWeight: "bold",
-    fontFamily: "Roboto",
+    fontFamily: "Arial",
     marginBottom: 100
   }
 });
