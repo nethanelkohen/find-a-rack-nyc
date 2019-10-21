@@ -15,12 +15,12 @@
   },
   "dependencies": {
     "dotenv": "^6.2.0",
-    "expo": "^32.0.0",
-    "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
+    "expo": "^35.0.0",
+    "react": "16.8.3",
     "react-native-elements": "^0.19.1",
     "react-native-indicators": "^0.13.0",
-    "react-native-maps": "^0.21.0",
+    "react-native-maps": "~0.25.0",
     "react-native-maps-super-cluster": "^1.5.0",
     "react-native-prompt": "^1.0.0"
   }
